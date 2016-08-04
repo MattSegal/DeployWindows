@@ -1,0 +1,94 @@
+===== Deployment Workflow =====
+
+Run bootstrap script (bootstrap_deploy.ps1)
+
+	* Set ExecutionPolicy to Bypass
+	* Make C:\Deploy directory
+	* Install Chocolately
+	* Install .NET 4.5 via choco
+	* Install Powershell and WMF 5 via choco
+	* Install MS SQL Server 2014
+	* Install PackageManager (for Install-Module)
+	* Install DSC Packages
+		- xWebAdministration
+		- xSQLServer
+
+	* Enable convenience features
+		- Set windows explorer options
+		- Install sublime text 3
+		- TODO: Copy $profile
+
+	* Reboot box
+
+Run Powershell DSC
+	* Set up Windows Features
+		- DotNet 3.5
+		- DotNet 4.5
+	* Set up IIS
+		- Enable IIS
+		- Enable ASP.NET 4.5
+		- Add the app pool
+		- todo: move files from deployment to website
+		* Add the website
+
+Install mysql
+	- choco install mysql
+	- choco install mysql.workbench
+
+===============================
+
+Other things we could do
+	* install git
+	* setup PSModulePath to find modules
+	* install python
+
+Tricks?
+	* . (Join-Path $PSScriptRoot MyScript.ps1)
+	* configure notes with configurationData = @{ AllNodes = @() }
+	* compile the DSC on the box? (project_environment.ps1)
+
+Deploying the build?
+	* build code to a separate folder (MSBuild)
+	* nominally run tests
+	* save build version to git repo
+	* move the code to server
+	* do whatever needs to be done on the server
+
+
+// IIS STUFF
+	To install the .NET Framework 4.5 Features, open the Server Manager and go to Server Roles. Navigate to Web Server (IIS) > Web Server > Application Development, select .NET Extensibility 3.5 and ASP.NET 4.5 and click Install. Voilà
+
+// https://technet.microsoft.com/en-us/library/hh831475.aspx
+
+Start /w pkgmgr /iu:IIS-WebServerRole;IIS-WebServer;IIS-CommonHttpFeatures;IIS-StaticContent;IIS-DefaultDocument;IIS-DirectoryBrowsing;IIS-HttpErrors;IIS-ApplicationDevelopment;IIS-ASPNET;IIS-NetFxExtensibility;IIS-ISAPIExtensions;IIS-ISAPIFilter;IIS-HealthAndDiagnostics;IIS-HttpLogging;IIS-LoggingLibraries;IIS-RequestMonitor;IIS-Security;IIS-RequestFiltering;IIS-HttpCompressionStatic;IIS-WebServerManagementTools;IIS-ManagementConsole;WAS-WindowsActivationService;WAS-ProcessModel;WAS-NetFxEnvironment;WAS-ConfigurationAP
+
+Start 
+/w pkgmgr 
+/iu:
+	IIS-WebServerRole;
+	IIS-WebServer;
+	IIS-CommonHttpFeatures;
+	IIS-StaticContent;
+	IIS-DefaultDocument;
+	IIS-DirectoryBrowsing;
+	IIS-HttpErrors;
+	IIS-ApplicationDevelopment;
+	IIS-ASPNET;
+	IIS-NetFxExtensibility;
+	IIS-ISAPIExtensions;
+	IIS-ISAPIFilter;
+	IIS-HealthAndDiagnostics;
+	IIS-HttpLogging;
+	IIS-LoggingLibraries;
+	IIS-RequestMonitor;
+	IIS-Security;
+	IIS-RequestFiltering;
+	IIS-HttpCompressionStatic;
+	IIS-WebServerManagementTools;
+	IIS-ManagementConsole;
+	WAS-WindowsActivationService;
+	WAS-ProcessModel;
+	WAS-NetFxEnvironment;
+	WAS-ConfigurationAP
+
+eNett "blah at eNett" series
