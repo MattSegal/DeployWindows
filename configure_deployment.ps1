@@ -6,7 +6,6 @@ if (Test-Path ".\$configName") {
     Remove-Item ".\$configName\*.mof" -force
 }
 
-
 # Load and compile the DSC
 & $configScript
 

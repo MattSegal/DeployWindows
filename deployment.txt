@@ -37,12 +37,16 @@ Install mysql
 	- choco install mysql
 	- choco install mysql.workbench
 
+Pull Build
+	
+	* get code from GitHub, pull into tempoary folder
+	* archive deployment
+	* put into live folder
+
 ===============================
 
 Other things we could do
-	* install git
 	* setup PSModulePath to find modules
-	* install python
 
 Tricks?
 	* . (Join-Path $PSScriptRoot MyScript.ps1)

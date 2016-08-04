@@ -5,7 +5,6 @@ Configuration WebServer
     )
 
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration'
-    # Import-DSCResource -ModuleName @{ModuleName="xSQLServer";ModuleVersion="1.4.0.0"}
     Import-DSCResource -ModuleName @{ModuleName="xWebAdministration";ModuleVersion="1.9.0.0"}
 
     Node $ComputerName
@@ -40,22 +39,16 @@ Configuration WebServer
             Name    = "Web-Asp-Net45" 
         } 
 
-        xWebAppPool NewWebAppPool 
+        xWebAppPool RedditFollowerAppPool 
         { 
-            Name   = "MyWebAppPool"
+            Name   = "RedditFollowerAppPool"
             Ensure = "Present" 
             State  = "Started" 
+            managedPipelineMode = "Integrated"
+            managedRuntimeVersion = "v4.0"
+            identityType = "ApplicationPoolIdentity"
+            startMode = "AlwaysRunning"
         } 
-
-        # File WebContent 
-        # { 
-        #     Ensure          = "Present" 
-        #     SourcePath      = $SourcePath 
-        #     DestinationPath = $DestinationPath 
-        #     Recurse         = $true 
-        #     Type            = "Directory" 
-        #     DependsOn       = "[WindowsFeature]AspNet45" 
-        # }
 
         xWebsite DefaultWebSite 
         {
@@ -66,19 +59,40 @@ Configuration WebServer
             DependsOn       = "[WindowsFeature]IIS"  
         }
 
-        # xWebsite MyWebSite 
-        # {
-        #     Ensure          = "Present" 
-        #     Name            = "MyWebSite" 
-        #     State           = "Started" 
-        #     PhysicalPath    = $DestinationPath 
-        #     BindingInfo     = MSFT_xWebBindingInformation 
-        #                     { 
-        #                         Protocol = "HTTP" 
-        #                         Port     = 80
-        #                     }
-        #     DependsOn       = "[File]WebContent" 
-        # }
+        xWebsite RedditFollower 
+        {
+            Ensure          = "Present" 
+            Name            = "RedditFollower" 
+            State           = "Started" 
+            PhysicalPath    = "C:\RedditFollower"
+            BindingInfo     = MSFT_xWebBindingInformation 
+                            { 
+                                Protocol = "HTTP" 
+                                Port     = 80
+                            }
+            DependsOn       = "[xWebAppPool]RedditFollowerAppPool" 
+            ApplicationPool = "RedditFollowerAppPool"
+        }
+
+        xWebApplication RedditFollowerWeb
+        {
+            Name = "RedditFollowerWeb"
+            Website = "RedditFollower"
+            Ensure = "Present" 
+            PhysicalPath = "C:\RedditFollower\RedditFollowerWeb"
+            WebAppPool = "RedditFollowerAppPool"
+            DependsOn = "[xWebsite]RedditFollower" 
+        }
+
+        xWebApplication RedditFollowerApi
+        {
+            Name = "RedditFollowerApi"
+            Website = "RedditFollowerApi"
+            Ensure = "Present" 
+            PhysicalPath = "C:\RedditFollower\RedditFollowerApi"
+            WebAppPool = "RedditFollowerAppPool"
+            DependsOn = "[xWebsite]RedditFollower" 
+        }
 
     }
 }
