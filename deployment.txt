@@ -12,12 +12,14 @@ Run bootstrap script (bootstrap_deploy.ps1)
 	* Install DSC Packages
 		- xWebAdministration
 		- xSQLServer
-
+	* Install utilities
+		- git
+		- python
 	* Enable convenience features
 		- Set windows explorer options
 		- Install sublime text 3
 		- TODO: Copy $profile
-
+	* Pull deployment scripts from GitHub
 	* Reboot box
 
 Run Powershell DSC

@@ -3,7 +3,7 @@ $BootstrapSettngs = @{
     InstallSqlServer            = $false;
     InstallDotNet               = $false;
     InstallDSC                  = $false;
-    InstallUtils                = $true;
+    InstallUtils                = $false;
     EnableConvenienceFeatures   = $false;
     PullDeploy                  = $true;
 }
@@ -72,16 +72,18 @@ try {
 
     # Convenience Features
     if ($BootstrapSettngs.EnableConvenienceFeatures) {
-        Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowFileExtensions
-        Disable-UAC
-        Disable-BingSearch
+        # Show hidden files and folders (need to restart Windows Explorer)
+        $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
+        Set-ItemProperty $key Hidden 1
+        Set-ItemProperty $key HideFileExt 0
+        Set-ItemProperty $key ShowSuperHidden 1
         choco install sublimetext3 -y
     }
 
     if ($BootstrapSettngs.PullDeploy) {
         Write-Host "Pulling Deployment code"
-        $cloneDir = "C:\DeployWindows"
-        Start-Process -FilePath git -ArgumentList "clone https://github.com/MattSegal/DeployWindows.git" $cloneDir
+        $cloneDir = "C:\SetupDeployment"
+        Start-Process -FilePath git -ArgumentList "clone https://github.com/MattSegal/DeployWindows.git $cloneDir" -Wait
 
     }
 
