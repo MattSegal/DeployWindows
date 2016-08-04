@@ -1,12 +1,11 @@
 $BootstrapSettngs = @{
-    DeploymentDir               = "C:\Deploy"
-    SetupDir                    = "C:\Setup"
     SetExecutionPolicy          = $false;
     InstallSqlServer            = $false;
-    InstallDotNet               = $true;
-    InstallDSC                  = $true;
+    InstallDotNet               = $false;
+    InstallDSC                  = $false;
     InstallUtils                = $true;
     EnableConvenienceFeatures   = $false;
+    PullDeploy                  = $true;
 }
 
 try {
@@ -18,16 +17,6 @@ try {
         Set-ExecutionPolicy Bypass
     }
     
-    # Deployment Directory
-    if ((Test-Path $BootstrapSettngs.DeploymentDir) -eq $false) {
-        New-Item $BootstrapSettngs.DeploymentDir -type Directory
-    }
-
-    # Setup Directory
-    if ((Test-Path $BootstrapSettngs.SetupDir) -eq $false) {
-        New-Item $BootstrapSettngs.SetupDir -type Directory
-    }
-
     #  Chocolately
     $isChocoInstalled =  $env:ChocolateyInstall.Length -gt 0
     if(!$isChocoInstalled) {
@@ -77,8 +66,8 @@ try {
 
     # Utilities
     if ($BootstrapSettngs.InstallUtils) {
-        choco install git
-        choco install python2
+        choco install git -y
+        choco install python2 -y
     }
 
     # Convenience Features
@@ -87,6 +76,13 @@ try {
         Disable-UAC
         Disable-BingSearch
         choco install sublimetext3 -y
+    }
+
+    if ($BootstrapSettngs.PullDeploy) {
+        Write-Host "Pulling Deployment code"
+        $cloneDir = "C:\DeployWindows"
+        Start-Process -FilePath git -ArgumentList "clone https://github.com/MattSegal/DeployWindows.git" $cloneDir
+
     }
 
 } catch {
