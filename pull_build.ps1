@@ -2,7 +2,7 @@ $currentDir = pwd
 
 # Make sure target dir exists
 $targetDir = "C:\RedditFollower"
-if (-Not (Test-Path $targetDir)) 
+if (-not ((Test-Path $targetDir) -and (Test-Path $targetDir\.git))) 
 {
     New-Item $targetDir -type directory
     cd $targetDir
