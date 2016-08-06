@@ -99,7 +99,7 @@ Configuration WebServer
         xWebApplication RedditFollowerApi
         {
             Name = "RedditFollowerApi"
-            Website = "RedditFollowerApi"
+            Website = "RedditFollower"
             Ensure = "Present" 
             PhysicalPath = "C:\RedditFollower\RedditFollowerApi"
             WebAppPool = "RedditFollowerAppPool"
