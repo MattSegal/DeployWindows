@@ -1,0 +1,1 @@
+Copy-Item profile.ps1 $profile
