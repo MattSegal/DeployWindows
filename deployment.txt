@@ -1,6 +1,8 @@
 ===== Deployment Workflow =====
 
-Run bootstrap script (bootstrap_deploy.ps1)
+Do windows updates (at some point)
+
+Run bootstrap script (bootstrap_deploy_1.ps1 and bootstrap_deploy_2.ps1)
 
 	* Set ExecutionPolicy to Bypass
 	* Make C:\Deploy directory
