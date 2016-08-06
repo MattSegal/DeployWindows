@@ -1,10 +1,9 @@
 $BootstrapSettngs = @{
-    SetExecutionPolicy          = $false;
-    InstallSqlServer            = $false;
-    InstallDotNet               = $false;
-    InstallDSC                  = $false;
-    InstallUtils                = $false;
-    EnableConvenienceFeatures   = $false;
+    SetExecutionPolicy          = $true;
+    InstallDotNet               = $true;
+    InstallDSC                  = $true;
+    InstallUtils                = $true;
+    EnableConvenienceFeatures   = $true;
     PullDeploy                  = $true;
 }
 
@@ -36,14 +35,6 @@ try {
         Write-Host "Installing PowerShell and WMF 5."
         choco install powershell -y
     }
-
-    # SQL Server
-    if ($BootstrapSettngs.InstallSqlServer) {
-        Write-Host "Installing MS SQL Server Express 2014."
-        # choco install mssql2014express-defaultinstance -y
-        Start-Process .\SqlLocalDB.msi
-        # msiexec /i ".\SqlLocalDB.msi"
-    }
     
     # PowerShell DSC
     if($BootstrapSettngs.InstallDSC) {
@@ -53,15 +44,15 @@ try {
         Set-PSRepository -InstallationPolicy Trusted -Name PSGallery
 
         Write-Host "Installing DSC modules"
-    #     Install-Module xStorage -RequiredVersion 2.4.0.0
         Install-Module xWebAdministration -RequiredVersion 1.9.0.0
+    #     Install-Module xStorage -RequiredVersion 2.4.0.0
     #     Install-Module xNetworking -RequiredVersion 2.7.0.0 
     #     Install-Module xCertificate -RequiredVersion 1.1.0.0
     #     Install-Module "xPSDesiredStateConfiguration" -RequiredVersion 3.7.0.0
     #     Install-Module Carbon -RequiredVersion 2.0.1
     #     Install-Module cChoco -RequiredVersion 2.0.5.22
     #     Install-Module cMsmq -RequiredVersion 1.0.3
-        Install-Module xSQLServer -RequiredVersion 1.4.0.0
+        # Install-Module xSQLServer -RequiredVersion 1.4.0.0
     }
 
     # Utilities
@@ -85,7 +76,6 @@ try {
         Write-Host "Pulling Deployment code"
         $cloneDir = "C:\SetupDeployment"
         Start-Process -FilePath git -ArgumentList "clone https://github.com/MattSegal/DeployWindows.git $cloneDir" -Wait
-
     }
 
 } catch {
