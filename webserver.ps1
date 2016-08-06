@@ -27,6 +27,18 @@ Configuration WebServer
             Name    = "Web-Server"
         }
 
+        WindowsFeature IISDirectoryBrowsing
+        {
+            Ensure  = "Present"
+            Name    = "Web-Dir-Browsing"
+        }
+
+        WindowsFeature IISStaticContent
+        {
+            Ensure  = "Present"
+            Name    = "Web-Static-Content"
+        }
+
         WindowsFeature IISManagmentConsole
         {
             Ensure  = "Present"

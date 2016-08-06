@@ -4,7 +4,10 @@ $currentDir = pwd
 $targetDir = "C:\RedditFollower"
 if (-not ((Test-Path $targetDir) -and (Test-Path $targetDir\.git))) 
 {
-    New-Item $targetDir -type directory
+    if (-not (Test-Path $targetDir))
+    {
+        New-Item $targetDir -type directory
+    }
     cd $targetDir
     git clone https://github.com/MattSegal/RedditFollowerDeploy.git .
 } 

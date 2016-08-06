@@ -78,6 +78,7 @@ try {
         Set-ItemProperty $key HideFileExt 0
         Set-ItemProperty $key ShowSuperHidden 1
         choco install sublimetext3 -y
+        choco install googlechrome -y
     }
 
     if ($BootstrapSettngs.PullDeploy) {
