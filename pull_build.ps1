@@ -2,7 +2,7 @@ $currentDir = pwd
 
 # Make sure target dir exists
 $targetDir = "C:\RedditFollower"
-if (-ne Test-Path $targetDir) {
+if (-Not (Test-Path $targetDir)) {
     New-Item $targetDir -type directory
 }
 
