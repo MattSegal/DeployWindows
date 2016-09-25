@@ -7,7 +7,7 @@ param
 Configuration RedditFollower
 {
     Import-DSCResource -ModuleName Deployment
-    Import-DscResource -ModuleName xWebAdministration
+    Import-DSCResource -ModuleName xWebAdministration
     
 
     Node $AllNodes.NodeName
@@ -16,7 +16,7 @@ Configuration RedditFollower
         {
         }
 
-        WebServer "IIS"
+        IISServer "IIS"
         { 
             ComputerName = $ComputerName
         }
@@ -29,7 +29,7 @@ Configuration RedditFollower
             managedRuntimeVersion = "v4.0"
             identityType = "ApplicationPoolIdentity"
             startMode = "AlwaysRunning"
-            DependsOn       = "[WebServer]IIS"
+            DependsOn = "[IISServer]IIS"
         } 
 
         xWebsite DefaultWebSite 
@@ -37,7 +37,7 @@ Configuration RedditFollower
             Name            = "Default Web Site" 
             State           = "Stopped" 
             PhysicalPath    = "C:\inetpub\wwwroot" 
-            DependsOn       = "[WebServer]IIS"  
+            DependsOn       = "[IISServer]IIS"  
         }
 
         xWebsite RedditFollower

@@ -1,4 +1,4 @@
-Configuration WebServer
+Configuration IISServer
 {
     param
     (
