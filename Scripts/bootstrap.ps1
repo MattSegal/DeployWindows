@@ -41,7 +41,7 @@ try
     }
 
     # Setup PowerShell DSC
-    Write-Host "Installing PackageManagement module"
+    Write-Host "Configuring Package Management"
     Import-Module PackageManagement
     Get-PackageProvider -Name NuGet -Force -ForceBootstrap
     Set-PSRepository -InstallationPolicy Trusted -Name PSGallery
@@ -51,8 +51,9 @@ try
     Install-Module xPSDesiredStateConfiguration
     Install-Module cChoco
 
-    # Try load git into path
-    RefreshEnv
+    # Install git
+    choco install git -y
+    $env:Path = [Environment]::GetEnvironmentVariable("Path","Machine")
 
     # Show hidden files and folders (need to restart Windows Explorer)
     $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
@@ -76,35 +77,38 @@ try
         Start-Process -FilePath git -ArgumentList "clone https://github.com/MattSegal/DeployWindows.git $scriptsDir" -Wait
     }
 
-    # Add setup modules to PSModulePath
+    Write-Host "Add setup modules to PSModulePath"
     $setupModules = Join-Path $scriptsDir "Modules"
     if (-Not (Test-Path $setupModules))
     {
         throw "$setupModules not found"
     }
     $PSModulePath = [Environment]::GetEnvironmentVariable("PSModulePath","Machine")
-    $PSModulePath = "$PSModulePath;$setupModules"
-    [Environment]::SetEnvironmentVariable("PSModulePath",$PSModulePath,"Machine")
-    $env:PSModulePath = [Environment]::GetEnvironmentVariable("PSModulePath","Machine")
-
+    if (-not $PSModulePath.Contains($setupModules))
+    {
+        $PSModulePath = "$PSModulePath;$setupModules"
+        [Environment]::SetEnvironmentVariable("PSModulePath",$PSModulePath,"Machine")
+        $env:PSModulePath = [Environment]::GetEnvironmentVariable("PSModulePath","Machine")
+    }
+    
     # Pull web app
-    $here = Get-Location
     $appDir = "C:\RedditFollower"
-    cd $appDir
     if (-not ((Test-Path $appDir) -and (Test-Path $appDir\.git))) 
     {
         if (-not (Test-Path $appDir))
         {
             New-Item $appDir -type directory
         }
-        
-        git clone https://github.com/MattSegal/RedditFollowerDeploy.git .
+        git clone https://github.com/MattSegal/RedditFollowerDeploy.git $appDir
     } 
     else
     {
+        $here = Get-Location
+        cd $appDir
         git pull "https://github.com/MattSegal/RedditFollowerDeploy.git"
+        cd $here 
     } 
-    cd $here 
+    
 
     Write-Host "Add PowerShell profile"
     $customProfile = Join-Path $scriptsDir "\Scripts\profile.ps1"
@@ -123,7 +127,9 @@ catch
         New-Item -Type Directory -Path $logDir
     }
     Write-Host "Logging exception at $logPath"
-    Out-File -FilePath $logPath -InputObject ($Error[0] | Out-String)
+    $errorMessage = ($Error[0] | Out-String)
+    Write-Host $errorMessage
+    Out-File -FilePath $logPath -InputObject $errorMessage
     exit 1
 }
 

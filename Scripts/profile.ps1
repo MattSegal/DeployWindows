@@ -11,4 +11,4 @@ $setup = "C:\Setup"
 $web = "C:\RedditFollower"
 $temp = "C:\Temp"
 
-cd $setup
+cd "$setup\Scripts"
