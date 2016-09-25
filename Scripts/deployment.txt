@@ -1,14 +1,26 @@
+TODO
+update to use .Net core
+https://docs.asp.net/en/latest/publishing/iis.html
+includes installing .net core 1.00 windows server hosting
+
+- install the core thingy for iis
+- setup new app pool with 'no managed code'
+- make website root path point to web (remove web)
+
 ===== Deployment Workflow =====
 
 Do windows updates (at some point)
 
-Run bootstrap script (bootstrap_deploy_1.ps1 and bootstrap_deploy_2.ps1)
+Run first bootstrap script (bootstrap_deploy_1.ps1)
 
 	* Set ExecutionPolicy to Bypass
-	* Make C:\Deploy directory
 	* Install Chocolately
 	* Install .NET 4.5 via choco
 	* Install Powershell and WMF 5 via choco
+	* Reboot box
+
+Run second bootstrap script (bootstrap_deploy_2.ps1)
+
 	* Install PackageManager (for Install-Module)
 	* Install DSC Packages
 		- xWebAdministration
@@ -21,6 +33,8 @@ Run bootstrap script (bootstrap_deploy_1.ps1 and bootstrap_deploy_2.ps1)
 		- Install google chrome
 	* Pull deployment scripts from GitHub
 	* Reboot box
+
+// do the following in any order
 
 Run Powershell DSC (configure_deployment.ps1)
 	* Set up Windows Features
