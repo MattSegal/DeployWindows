@@ -1,0 +1,177 @@
+#1 Install Windows Updates
+#2 Manage => add roles and features => Web Server (IIS) + FTP server
+#3 Restart, add FTP site in IIS
+
+
+Find-DSCResource
+Get-DSCResource
+____________________________________
+
+Getting the right powershell version
+
+Powershell DSC
+
+requires windows managment framework 4
+	- PS4
+	- Commen I-something Model (CIM) Namespace
+	- DSC cmdlets and resources
+
+.NET Framework 4.5+
+Windows server 2008 R2 SP1 or later
+
+Needs powershell remoting. Maybe some SSL stuff as well.
+
+PSDesiredStateConfiguration module
+
+Managment Object Format (MOF)
+
+Authoring
+	Write declarative or imperative commands --> MOF definition
+
+Staging
+	MOF --> environment
+	env calculates what it needs to do to get into desired state
+
+Make It So
+	config implemented
+
+Push model - staging point pushes config to servers
+Pull model - servers poll central server for config info
+
+config script MyServerConfig.ps1 => MOF file MyServer
+start config using
+	Start-DscConfiguration -Path .\MyServer
+
+DSC could integrate with Chef and can maybe in the future be used with non-windows servers
+(!!!!)
+
+PowerShell in Depth: An Administrator's Guide 2nd ed
+
+=========================================
+=============== Resources ===============
+=========================================
+
+Resources packaged as a powershell module
+Resources installed must be on server and client computer
+one configuration per server
+test in non prod environment (lol)
+Each resource module has 3 key functions
+	# Get-TargetResource
+	# Set-TargetResource
+	# Test-TargetResource
+
+C:\ProgramFiles\WindowsPowerShell\Modules
+or
+$PSHome\Modules
+
+Resource should be in $ENV:PSModulePath
+
+// get list of modules
+$env:PSModulePath -split ';'
+
+Built in resources (https://msdn.microsoft.com/en-us/powershell/dsc/builtinresource)
+	Archive Resource 			unpack zip files
+	Environment Resource 		system environment variables
+	File Resource 				manage files and folders
+	Group Resource  			manage local groups 
+	Log Resource 				write messages to the DSC event log
+	Package Resource  			install or uninstall packages, such as Windows Installer and setup.exe
+	Registry Resource 			manage registry keys and values 
+	Script Resource 			run Windows PowerShell script blocks
+	Service Resource 			manage services
+	User Resource 				manage local user accounts
+	WindowsFeature Resource 	ensure that roles and features are added or removed
+	WindowsProcess Resource 	configure processes
+
+Open source resources (https://github.com/PowerShell/DscResources/tree/master/xDscResources)
+	xSQLServer 					deployment and configuration of SQL Server 
+	xWebAdministration			creating and configuring various IIS artifacts
+	xWindowsUpdate 				installs a Windows Update 
+
+// what resources you can yse
+Get-DSCResource
+
+// get info on specific resource
+Get-DSCResource Service | Select -ExpandProperty Properties | Format-Table -Auto
+
+// the actual syntax you should use
+Get-DSCResource Service -Syntax
+
+// syntax result
+WindowsFeature [string] #ResourceName
+{
+    Name = [string]
+    [ Credential = [PSCredential] ]
+    [ DependsOn = [string[]] ]
+    [ Ensure = [string] { Absent | Present }  ]
+    [ IncludeAllSubFeature = [bool] ]
+    [ LogPath = [string] ]
+    [ Source = [string] ]
+}
+
+=========================================
+============== Configurations  ==========
+=========================================
+
+* imperative and declarative commands
+* you must import DSC resources if they are not in $PSHome using Import-DSCResource (name or module name)
+
+Configuration MyConfig {
+	
+	# MOF Generated for each node
+
+	Node MY-COMPUTER {
+	
+		# define resources for each node
+
+		WindowsFeature Backup {
+			Name = "Windows-Server-Backup"
+			Ensure = "Present"
+		}
+
+		File Work {
+			Type = "Directory"
+			Ensure = "Present"
+			DestinationPath = "C:\Work"
+		}
+
+		Service RemoteRegistry {
+			Name = "RemoteRegistry"
+			StartupType = "Automatic"
+			State = "Running"
+		}
+	}
+}
+
+* configuration files can be parameterized
+* data stored in has table or psd1 file (ps data file)
+
+$ConfigurationData = @{
+	AllNodes = @(
+		@{NodeName = "Foo"; Role="Guzzler"},
+		@{NodeName = "Bar"; Role="Bushwacker"}
+		@{NodeName = "*"; Features = "Windows-Server-Backup"}
+	);
+	SomeOtherData = @{
+		Baz = 1337
+	}
+}
+
+example:
+
+Configuration MyDataDrivenConfig {=
+	Node $AllNodes.NodeName {
+		$Node.Features.ForEach ({
+			WindowsFeature $_ {
+				Name = $_
+				Ensure = "Present"
+			} 
+		})
+	}
+}
+
+
+* Creating the MOF file
+* Invoke the configuration
+* Outputs MOF files to a chile folder
+* One MOF per node
