@@ -6,6 +6,7 @@ try
     $ErrorActionPreference = "Stop"
 
     Write-Host "Applying 'RemoteSigned' execution policy."
+    # You may have to run this manually
     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Force
     
     #  Chocolately
@@ -33,8 +34,12 @@ try
         {
             Invoke-Reboot
         }
-    }   
-    
+        else 
+        {
+            exit 0
+        }
+    }
+
     # Setup PowerShell DSC
     Write-Host "Installing PackageManagement module"
     Import-Module PackageManagement
