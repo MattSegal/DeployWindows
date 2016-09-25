@@ -6,7 +6,7 @@ param
 
 Configuration RedditFollower
 {
-    Import-DscResource –ModuleName 'PSDesiredStateConfiguration'
+    Import-DSCResource -ModuleName 'PSDesiredStateConfiguration'
     Import-DSCResource -ModuleName 'xWebAdministration'
     Import-DSCResource -ModuleName 'Deployment'
     
