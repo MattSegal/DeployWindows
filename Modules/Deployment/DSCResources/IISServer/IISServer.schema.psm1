@@ -11,7 +11,7 @@ Configuration IISServer
 
     if ($isServerOs)
     {
-        Import-DscResource -ModuleName xPSDesiredStateConfiguration
+        Import-DscResource -ModuleName 'xPSDesiredStateConfiguration'
         xWindowsFeature DotNetFramework35
         {
             Name = "NET-Framework-Features"
