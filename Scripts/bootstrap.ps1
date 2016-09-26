@@ -47,9 +47,9 @@ try
     Set-PSRepository -InstallationPolicy Trusted -Name PSGallery
 
     Write-Host "Installing DSC modules"
-    Install-Module xWebAdministration
-    Install-Module xPSDesiredStateConfiguration
-    Install-Module cChoco
+    Install-Module xWebAdministration -Verbose
+    Install-Module xPSDesiredStateConfiguration -Verbose
+    Install-Module cChoco -Verbose
 
     # Install git
     choco install git -y
