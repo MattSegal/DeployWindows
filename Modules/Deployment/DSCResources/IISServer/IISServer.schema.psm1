@@ -5,13 +5,15 @@ Configuration IISServer
         [Parameter(Mandatory=$true)]
         [String]$ComputerName
     )
+    Import-DscResource -ModuleName 'xPSDesiredStateConfiguration'
+    
     # Do it manually if it's not a Server OS
     $osCaption = (Get-WmiObject -ComputerName $ComputerName -class Win32_OperatingSystem).Caption
     $isServerOs = $osCaption.Contains("Server")
 
     if ($isServerOs)
     {
-        Import-DscResource -ModuleName 'xPSDesiredStateConfiguration'
+        
         xWindowsFeature DotNetFramework35
         {
             Name = "NET-Framework-Features"
